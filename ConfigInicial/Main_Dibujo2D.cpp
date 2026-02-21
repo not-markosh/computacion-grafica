@@ -11,7 +11,7 @@
 
 void resize(GLFWwindow* window, int width, int height);
 
-const GLint WIDTH = 800, HEIGHT = 600;
+const GLint WIDTH = 1000, HEIGHT = 800;
 
 
 int main() {
@@ -23,7 +23,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Dibujo de Primitivas en 2D - Sanchez Hernandez Marco Antonio", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Práctica 2: Dibujo de Primitivas en 2D - Sanchez Hernandez Marco Antonio", NULL, NULL);
 	glfwSetFramebufferSizeCallback(window, resize);
 	
 	//Verificaci�n de errores de creacion  ventana
@@ -59,10 +59,99 @@ int main() {
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	float vertices[] = {
-		0.5f,  0.5f, 0.0f,    1.0f,1.0f,0.0f,  // top right
-		0.5f, -0.5f, 0.0f,    1.0f,1.0f,0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,   1.0f,0.0f,1.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f,1.0f,0.0f, // top left 
+		0.0f, 0.0f, 0.0f,      1.0f, 0.0f, 0.0f,
+		0.5f, 0.05f, 0.0f,     1.0f, 0.0f, 0.0f,
+		0.1f, 0.3f, 0.0f,      1.0f, 0.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f,      0.0f, 1.0f, 0.0f,
+		0.5f, 0.05f, 0.0f,     0.0f, 1.0f, 0.0f,
+		0.45f, -0.2f, 0.0f,   0.0f, 1.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f,      0.0f, 0.0f, 1.0f,
+		0.45f, -0.2f, 0.0f,   0.0f, 0.0f, 1.0f,
+		0.2f, -0.3f, 0.0f,    0.0f, 0.0f, 1.0f,
+
+		0.5f, 0.05f, 0.0f,     0.0f, 1.0f, 1.0f,
+		0.45f, -0.2f, 0.0f,     0.0f, 1.0f, 1.0f,
+		0.6f, 0.051f, 0.0f,    0.0f, 1.0f, 1.0f,
+
+		0.5f, 0.05f, 0.0f,     1.0f, 1.0f, 0.0f,
+		0.6f, 0.051f, 0.0f,     1.0f, 1.0f, 0.0f,
+		0.57f, 0.15f, 0.0f,     1.0f, 1.0f, 0.0f,
+
+		0.5f, 0.05f, 0.0f,     1.0f, 0.0f, 1.0f,
+		0.57f, 0.15f, 0.0f,    1.0f, 0.0f, 1.0f,
+		0.1f, 0.3f, 0.0f,     1.0f, 0.0f, 1.0f,
+
+		0.0f, 0.0f, 0.0f,      1.0f, 0.0f, 1.0f,
+		0.2f, -0.3f, 0.0f,     1.0f, 0.0f, 1.0f,
+		-0.2f, -0.25f, 0.0f,   1.0f, 0.0f, 1.0f,
+
+		0.0f, 0.0f, 0.0f,     0.0f, 1.0f, 1.0f,
+		0.1f, 0.3f, 0.0f,     0.0f, 1.0f, 1.0f,
+		-0.07f, 0.2f, 0.0f,   0.0f, 1.0f, 1.0f,
+
+		0.0f, 0.0f, 0.0f,     1.0f, 1.0f, 0.0f,
+		-0.2f, -0.25f, 0.0f,  1.0f, 1.0f, 0.0f,
+		-0.22f, 0.2f, 0.0f,   1.0f, 1.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f,     0.0f, 1.0f, 0.0f,
+		-0.22f, 0.2f, 0.0f,   0.0f, 1.0f, 0.0f,
+		-0.07f, 0.2f, 0.0f,   0.0f, 1.0f, 0.0f,
+
+		0.1f, 0.3f, 0.0f,     0.0f, 0.0f, 1.0f,
+		-0.07f, 0.2f, 0.0f,   0.0f, 0.0f, 1.0f,
+		-0.09f, 0.31f, 0.0f,  0.0f, 0.0f, 1.0f,
+
+		-0.07f, 0.2f, 0.0f,   1.0f, 0.0f, 0.0f,
+		-0.09f, 0.31f, 0.0f,  1.0f, 0.0f, 0.0f,
+		-0.22f, 0.2f, 0.0f,   1.0f, 0.0f, 0.0f,
+
+		-0.22f, 0.2f, 0.0f,   1.0f, 0.0f, 0.0f,
+		-0.35f, -0.15f, 0.0f,   1.0f, 0.0f, 0.0f,
+		-0.2f, -0.25f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+		-0.22f, 0.2f, 0.0f,   0.0f, 1.0f, 1.0f,
+		-0.35f, -0.15f, 0.0f,   0.0f, 1.0f, 1.0f,
+		-0.38f, 0.01f, 0.0f,     0.0f, 1.0f, 1.0f,
+
+		-0.38f, 0.01f, 0.0f,     1.0f, 0.0f, 1.0f,
+		-0.22f, 0.2f, 0.0f,   1.0f, 0.0f, 1.0f,
+		-0.34f, 0.195f, 0.0f,   1.0f, 0.0f, 1.0f,
+
+		-0.22f, 0.2f, 0.0f,   0.0f, 1.0f, 0.0f,
+		-0.34f, 0.195f, 0.0f,   0.0f, 1.0f, 0.0f,
+		-0.28f, 0.41f, 0.0f,    0.0f, 1.0f, 0.0f,
+
+		-0.22f, 0.2f, 0.0f,   1.0f, 1.0f, 0.0f,
+		-0.09f, 0.31f, 0.0f,  1.0f, 1.0f, 0.0f,
+		-0.12f, 0.38f, 0.0f,  1.0f, 1.0f, 0.0f,
+
+		-0.12f, 0.38f, 0.0f,  0.0f, 1.0f, 0.0f,
+		-0.11f, 0.41f, 0.0f,   0.0f, 1.0f, 0.0f,
+		-0.14f, 0.4f, 0.0f,   0.0f, 1.0f, 0.0f,
+
+		-0.12f, 0.38f, 0.0f,  0.0f, 0.0f, 1.0f,
+		-0.14f, 0.4f, 0.0f,   0.0f, 0.0f, 1.0f,
+		-0.28f, 0.41f, 0.0f,    0.0f, 0.0f, 1.0f,
+		-0.22f, 0.2f, 0.0f,   0.0f, 0.0f, 1.0f,
+
+		-0.11f, 0.41f, 0.0f,   1.0f, 1.0f, 0.0f,
+		-0.14f, 0.4f, 0.0f,   1.0f, 1.0f, 0.0f,
+		-0.145f, 0.44f, 0.0f,  1.0f, 1.0f, 0.0f,
+
+		-0.145f, 0.44f, 0.0f,  1.0f, 0.0f, 1.0f,
+		-0.11f, 0.41f, 0.0f,   1.0f, 0.0f, 1.0f,
+		-0.14f, 0.6f, 0.0f,     1.0f, 0.0f, 1.0f,
+
+		-0.14f, 0.6f, 0.0f,     0.0f, 1.0f, 1.0f,
+		-0.145f, 0.44f, 0.0f,  0.0f, 1.0f, 1.0f,
+		-0.2f, 0.52f, 0.0f,    0.0f, 1.0f, 1.0f,
+
+		//-0.145f, 0.44f, 0.0f,  1.0f, 0.0f, 0.0f,
+		//-0.28f, 0.41f, 0.0f,    1.0f, 0.0f, 0.0f,
+		//-0.14f, 0.4f, 0.0f,   1.0f,0.0f, 0.0f,
+		//-0.28f, 0.44f, 0.0f,  1.0f, 0.0f, 0.0f,
 	};
 	unsigned int indices[] = {  // note that we start from 0!
 		3,2,1,// second Triangle
@@ -121,13 +210,15 @@ int main() {
 
 
         //glPointSize(10);
-        //glDrawArrays(GL_POINTS,0,4);
+        //glDrawArrays(GL_POINTS,4,1);
         
         //glDrawArrays(GL_LINES,0,4);
         //glDrawArrays(GL_LINE_LOOP,0,4);
         
-        //glDrawArrays(GL_TRIANGLES,0,3);
-        glDrawElements(GL_TRIANGLES, 3,GL_UNSIGNED_INT,0);
+        glDrawArrays(GL_TRIANGLES, 0, 54);
+		glDrawArrays(GL_POLYGON, 54, 4);
+		glDrawArrays(GL_TRIANGLES, 58, 12);
+        //glDrawElements(GL_TRIANGLES, 3,GL_UNSIGNED_INT,0);
 
         
         
