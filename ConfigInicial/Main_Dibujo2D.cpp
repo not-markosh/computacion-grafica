@@ -1,3 +1,8 @@
+// Marco Antonio Sanchez Hernandez
+// 318264347
+// 20/02/2026
+
+
 #include<iostream>
 
 //#define GLEW_STATIC
