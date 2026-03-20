@@ -1,7 +1,7 @@
-// Previo 6. Carga de modelos
+// Práctica 6. Carga de modelos
 // Marco Antonio Sánchez Hernández
 // 318264347
-// 15/03/2026
+// 20/03/2026
 
 
 // Std. Includes
@@ -60,7 +60,7 @@ int main( )
     glfwWindowHint( GLFW_RESIZABLE, GL_FALSE );
     
     // Create a GLFWwindow object that we can use for GLFW's functions
-    GLFWwindow *window = glfwCreateWindow( WIDTH, HEIGHT, "Previo 6. Carga de modelos - Marco Antonio Sánchez Hernández", nullptr, nullptr );
+    GLFWwindow *window = glfwCreateWindow( WIDTH, HEIGHT, "Practica 6. Carga de modelos - Marco Antonio Sánchez Hernández", nullptr, nullptr );
     
     if ( nullptr == window )
     {
@@ -101,6 +101,20 @@ int main( )
     
     // Load models
     Model dog((char*)"Models/RedDog.obj");
+
+    // Source: https://free3d.com/3d-model/ak-74-little-bonus--60789.html
+    Model gun((char*)"Models/AK.obj");
+
+    // Source: https://free3d.com/3d-model/object-430-88843.html
+    Model tank((char*)"Models/430.obj");
+    // Source: https://free3d.com/3d-model/free-military-fence-gate--82942.html
+    Model fance((char*)"Models/military fence gate.obj");
+
+    // Source: https://free3d.com/3d-model/tree-74556.html
+    Model tree((char*)"Models/Tree.obj");
+
+    // Source: https://free3d.com/3d-model/roundwood-41562.html
+    Model wood((char*)"Models/Wood.obj");
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     
   
@@ -132,10 +146,36 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         dog.Draw(shader);
 
-        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(0.2f, -0.1f, 0.3f));
+        model = glm::scale(model, glm::vec3(0.005f, 0.005f, 0.005f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        dog.Draw(shader);
+        gun.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(-2.0f, 0.0f, -1.0f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        tank.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
+        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        fance.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        tree.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(5.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        wood.Draw(shader);
+
 
         // Swap the buffers
         glfwSwapBuffers( window );
