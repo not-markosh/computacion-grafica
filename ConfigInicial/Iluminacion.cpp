@@ -1,7 +1,7 @@
-// Previo 8. Materiales e Iluminacion
+// Práctica 8. Materiales e Iluminacion
 // Marco Antonio Sanchez Hernandez
 // 318264347
-// 05/04/2026
+// 09/04/2026
 
 
 // Std. Includes
@@ -50,6 +50,7 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 float rot = 0.0f;
 bool activanim = false;
+bool lightMode = true;
 
 int main()
 {
@@ -63,7 +64,7 @@ int main()
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create a GLFWwindow object that we can use for GLFW's functions
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Previo 8. Materiales e Iluminacion - Marco Antonio Sanchez Hernandez", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Practica 8. Materiales e Iluminacion - Marco Antonio Sanchez Hernandez", nullptr, nullptr);
 
     if (nullptr == window)
     {
@@ -107,7 +108,12 @@ int main()
 
 
     // Load models
+
     Model red_dog((char*)"Models/RedDog.obj");
+
+    // Source: https://www.turbosquid.com/FullPreview/521871
+    Model lantern((char*)"Models/Gamelantern_updated.obj");
+
     glm::mat4 projection = glm::perspective(camera.GetZoom(), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
     float vertices[] = {
@@ -212,53 +218,62 @@ int main()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
+        float sunRange = 4.0f;
+        float sunHeight = 1.0f;
+        float a = sunHeight / (sunRange * sunRange);
+
+        glm::vec3 sunOffset;
+        sunOffset.x = movelightPos;
+        sunOffset.y = -a * (movelightPos * movelightPos) + sunHeight;
+        sunOffset.z = 0.0f;
+
         lightingShader.Use();
         GLint lightPosLoc = glGetUniformLocation(lightingShader.Program, "light.position");
         GLint viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
-        glUniform3f(lightPosLoc, lightPos.x + movelightPos, lightPos.y + movelightPos, lightPos.z + movelightPos);
+        glUniform3f(lightPosLoc, lightPos.x + sunOffset.x, lightPos.y + sunOffset.y, lightPos.z + sunOffset.z);
         glUniform3f(viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 
+        float lightValue = lightMode ? 1.0f : 0.5f;  // light properties
+        float materialValue = lightMode ? 0.5f : 0.25f; // material properties
 
         // Set lights properties
-        glUniform3f(glGetUniformLocation(lightingShader.Program,"light.ambient"),0.3f,0.3f,0.3f);
-        glUniform3f(glGetUniformLocation(lightingShader.Program, "light.diffuse"), 0.2f, 0.7f, 0.8f);
-        glUniform3f(glGetUniformLocation(lightingShader.Program, "light.specular"), 0.3f, 0.4f, 0.4f);
+        glUniform3f(glGetUniformLocation(lightingShader.Program,"light.ambient"), lightValue, lightValue, lightValue);
+        glUniform3f(glGetUniformLocation(lightingShader.Program, "light.diffuse"), lightValue, lightValue, lightValue);
+        glUniform3f(glGetUniformLocation(lightingShader.Program, "light.specular"), lightValue, lightValue, lightValue);
 
         glm::mat4 view = camera.GetViewMatrix();
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
         // Set material properties
-        glUniform3f(glGetUniformLocation(lightingShader.Program, "material.ambient"), 0.5f, 0.5f, 0.5f);
-        glUniform3f(glGetUniformLocation(lightingShader.Program, "material.diffuse"), 0.8f, 0.2f, 0.1f);
-        glUniform3f(glGetUniformLocation(lightingShader.Program, "material.specular"), 0.0f, 0.0f, 0.0f);
+        glUniform3f(glGetUniformLocation(lightingShader.Program, "material.ambient"), materialValue, materialValue, materialValue);
+        glUniform3f(glGetUniformLocation(lightingShader.Program, "material.diffuse"), materialValue, materialValue, materialValue);
+        glUniform3f(glGetUniformLocation(lightingShader.Program, "material.specular"), materialValue, materialValue, materialValue);
         glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 0.0f);
 
 
         // Draw the loaded model
         glm::mat4 model(1);
-        model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+        //model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glBindVertexArray(VAO);
         red_dog.Draw(lightingShader);
+
         //glDrawArrays(GL_TRIANGLES, 0, 36);
         
-
         glBindVertexArray(0);
-
-
-
 
         lampshader.Use();
         glUniformMatrix4fv(glGetUniformLocation(lampshader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(glGetUniformLocation(lampshader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
         model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos + movelightPos);
-        model = glm::scale(model, glm::vec3(0.3f));
+        model = glm::translate(model, lightPos + sunOffset);
+        model = glm::scale(model, glm::vec3(1.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(lampshader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        lantern.Draw(lampshader);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
 
         // Swap the buffers
@@ -325,6 +340,11 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
         }
     }
 
+    if (key == GLFW_KEY_T && action == GLFW_PRESS)
+    {
+        lightMode = !lightMode;
+    }
+
     if (keys[GLFW_KEY_O])
     {
        
@@ -336,8 +356,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
         
         movelightPos -= 0.1f;
     }
-
-
 }
 
 void MouseCallback(GLFWwindow* window, double xPos, double yPos)
