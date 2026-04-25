@@ -1,7 +1,7 @@
-// Previo 10. Animación Básica
+// Práctica 10. Animación Básica
 // Marco Antonio Sanchez Hernandez
 // 318264347
-// 19/04/2026
+// 24/04/2026
 
 #include <iostream>
 #include <cmath>
@@ -104,9 +104,17 @@ float vertices[] = {
 
 
 glm::vec3 Light1 = glm::vec3(0);
-//Anim
+
 float rotBall = 0;
+float ballX = 0.0f;
+float ballZ = 0.0f;
+float dogX = 0.0f;
+float dogY = 0.0f;
+float dogZ = 0.0f;
+float dogRotY = 0.0f;
+float animTime = 0.0f;
 bool AnimBall = false;
+
 
 
 // Deltatime
@@ -212,11 +220,6 @@ int main()
 		// OpenGL options
 		glEnable(GL_DEPTH_TEST);
 
-		
-		
-		
-	
-
 		// Use cooresponding shader when setting uniforms/drawing objects
 		lightingShader.Use();
 
@@ -291,6 +294,8 @@ int main()
 		Piso.Draw(lightingShader);
 
 		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(dogX, dogY, dogZ));
+		model = glm::rotate(model, glm::radians(dogRotY), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 		Dog.Draw(lightingShader);
@@ -300,8 +305,7 @@ int main()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
-		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(0.0f, rotBall, 0.0f));
+		model = glm::translate(model, glm::vec3(ballX, rotBall, ballZ));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	    Ball.Draw(lightingShader); 
 		glDisable(GL_BLEND);  //Desactiva el canal alfa 
@@ -448,38 +452,56 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 		
 	}
 }
-//void Animation() {
-//	if (AnimBall)
-//	{
-//		rotBall += 0.2f;
-//		printf("%f", rotBall);
-//	}
-//	else
-//	{
-//		rotBall = 0.0f;
-//	}
-//}
-
-float direction = 1.0f;
 
 void Animation() {
 	if (AnimBall)
 	{
-		rotBall += 0.02f * direction;
 
-		if (rotBall >= 1.5f)
-			direction = -1.0f;
-		else if (rotBall <= 0.0f)
-			direction = 1.0f;
+		animTime += 0.02f;
 
+		float circleSpeed = 1.2f;
+		float theta = animTime * circleSpeed;
+		float circleRadius = 2.0f;
 
-		printf("%f\n", rotBall);
+		ballX = circleRadius * cos(theta);
+		ballZ = circleRadius * sin(theta);
+
+		dogX = circleRadius * cos(theta);
+		dogZ = circleRadius * sin(theta);
+
+		float ballShape = pow(fabs(sin(theta * 2.0f)), 0.3f);
+
+		rotBall = ballShape * 2.5f;
+
+		float c = cos(theta * 2.0f);
+		float dogShape = pow(c * c, 4.0f);
+		dogY = dogShape * 1.2f;
+
+		float tangentX = -sin(theta);
+		float tangentZ = cos(theta);
+		float targetRot = glm::degrees(atan2(tangentX, tangentZ));
+
+		float diff = targetRot - dogRotY;
+		while (diff > 180.0f)  diff -= 360.0f;
+		while (diff < -180.0f) diff += 360.0f;
+		dogRotY += diff * 0.1f;
+
+		printf("theta=%.2f  ballY=%.2f  dogY=%.2f  rot=%.2f\n",
+			theta, 3.0f + rotBall, dogY, dogRotY);
 	}
 	else
 	{
+		animTime = 0.0f;
 		rotBall = 0.0f;
+		ballX = 0.0f;
+		ballZ = 0.0f;
+		dogX = 0.0f;
+		dogY = 0.0f;
+		dogZ = 0.0f;
+		dogRotY = 0.0f;
 	}
 }
+
 
 void MouseCallback(GLFWwindow *window, double xPos, double yPos)
 {
