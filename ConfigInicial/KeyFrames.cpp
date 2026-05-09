@@ -1,9 +1,10 @@
-// Previo 12. Animación por KeyFrames
+// Práctica 12. Animación por KeyFrames
 // Marco Antonio Sanchez Hernandez
 // 318264347
-// 03/05/2026
+// 08/05/2026
 
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 // GLEW
@@ -119,7 +120,7 @@ float FRLeg = 0.0f;
 //KeyFrames
 float dogPosX , dogPosY , dogPosZ  ;
 
-#define MAX_FRAMES 9
+#define MAX_FRAMES 16
 int i_max_steps = 190;
 int i_curr_steps = 0;
 typedef struct _frame {
@@ -165,6 +166,80 @@ void saveFrame(void)
 	FrameIndex++;
 }
 
+void saveFramesToFile(const char* filename)
+{
+	std::ofstream file(filename);
+
+	if (!file.is_open())
+	{
+		printf("Error: Could not open file %s for writing\n", filename);
+		return;
+	}
+
+	file << FrameIndex << "\n";
+
+	for (int i = 0; i < FrameIndex; i++)
+	{
+		file << KeyFrame[i].dogPosX << " "
+			<< KeyFrame[i].dogPosY << " "
+			<< KeyFrame[i].dogPosZ << " "
+			<< KeyFrame[i].rotDog << " "
+			<< KeyFrame[i].head << " "
+			<< KeyFrame[i].FRLeg << " "
+			<< KeyFrame[i].RLegs << "\n";
+	}
+
+	file.close();
+	printf("Saved %d frames to %s\n", FrameIndex, filename);
+}
+
+void loadFramesFromFile(const char* filename)
+{
+	std::ifstream file(filename);
+
+	if (!file.is_open())
+	{
+		printf("Error: Could not open file %s for reading\n", filename);
+		return;
+	}
+
+	int frameCount = 0;
+	file >> frameCount;
+
+	if (frameCount > MAX_FRAMES)
+	{
+		printf("Warning: File contains %d frames, but MAX_FRAMES is %d. Truncating.\n",
+			frameCount, MAX_FRAMES);
+		frameCount = MAX_FRAMES;
+	}
+
+	for (int i = 0; i < MAX_FRAMES; i++)
+	{
+		KeyFrame[i].incX = 0;
+		KeyFrame[i].incY = 0;
+		KeyFrame[i].incZ = 0;
+		KeyFrame[i].rotDogInc = 0;
+		KeyFrame[i].headInc = 0;
+		KeyFrame[i].FRLegInc = 0;
+		KeyFrame[i].RLegsInc = 0;
+	}
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		file >> KeyFrame[i].dogPosX
+			>> KeyFrame[i].dogPosY
+			>> KeyFrame[i].dogPosZ
+			>> KeyFrame[i].rotDog
+			>> KeyFrame[i].head
+			>> KeyFrame[i].FRLeg
+			>> KeyFrame[i].RLegs;
+	}
+
+	FrameIndex = frameCount;
+	file.close();
+	printf("Loaded %d frames from %s\n", frameCount, filename);
+}
+
 void resetElements(void)
 {
 	dogPosX = KeyFrame[0].dogPosX;
@@ -208,7 +283,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Previo 12. Animación por KeyFrames - Marco Antonio Sanchez Hernandez", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Práctica 12. Animación por KeyFrames - Marco Antonio Sanchez Hernandez", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -622,7 +697,22 @@ void DoMovement()
 	{
 		pointLightPositions[0].z += 0.01f;
 	}
-	
+	if (keys[GLFW_KEY_O])  // 'O' for Output (save to file)
+	{
+		if (FrameIndex > 0)
+		{
+			saveFramesToFile("animation.txt");
+		}
+		else
+		{
+			printf("No frames to save\n");
+		}
+	}
+
+	if (keys[GLFW_KEY_P])  // 'P' for loP... pickup (load from file)
+	{
+		loadFramesFromFile("animation.txt");
+	}
 }
 
 // Is called whenever a key is pressed/released via GLFW
